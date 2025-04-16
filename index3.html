@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lead Generation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://click-tracker-5de18.web.app/scripts/click-tracker-script-1.0.1-build.16.js"></script> -->
+    <script src="http://127.0.0.1:5050/express-consent-script.bundle.js"></script>
+  </head>
+  <body
+    class="bg-gradient-to-b from-indigo-50 to-blue-100 min-h-screen flex items-center justify-center p-4"
+  >
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-lg p-6">
+      <div class="text-center mb-6">
+        <span
+          class="inline-block py-1 px-4 bg-indigo-100 text-indigo-800 text-3xl font-bold rounded-lg shadow-sm"
+        >
+          DEMO
+        </span>
+      </div>
+      <h1 class="text-3xl font-bold mb-2 text-center text-gray-800">
+        Lead Form
+      </h1>
+      <p class="text-center text-gray-600 mb-6">
+        Submit the form to see the lead snapshot appear in the ExpressConsent
+        dashboard.
+      </p>
+
+      <form id="leadForm" action="#" method="post" class="space-y-5">
+        <div>
+          <label
+            for="phone"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Phone Number</label
+          >
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Enter a fake phone number"
+          />
+        </div>
+
+        <div class="flex items-center">
+          <input
+            id="tcpa"
+            name="tcpa"
+            type="checkbox"
+            required
+            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          />
+          <label for="tcpa" class="ml-2 text-sm text-gray-700">
+            I agree to receive marketing calls, texts & automated messages from
+            Demo Company at the number provided.
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full text-white bg-indigo-600 hover:bg-indigo-700 font-semibold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <div
+      id="thankYouPopup"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+    >
+      <div class="bg-white rounded-lg p-8 max-w-md text-center">
+        <svg
+          class="w-16 h-16 text-green-500 mx-auto mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          ></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Thank You!</h2>
+        <p class="text-gray-600 mb-6">
+          Your information has been submitted successfully.
+        </p>
+        <button
+          id="closePopup"
+          class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <script>
+      console.log("ExpressConsent object:", ExpressConsent);
+      console.log("typeof ExpressConsent:", typeof ExpressConsent);
+
+      // List all properties on ExpressConsent
+      if (ExpressConsent) {
+        console.log(
+          "ExpressConsent properties:",
+          Object.getOwnPropertyNames(ExpressConsent)
+        );
+      }
+    </script>
+
+    <script>
+      // Initialize FormCapture before using captureAndUpload.
+      // SnapshotTool.init();
+
+      // Specify some event that you want to capture a snapshot after.
+      document
+        .getElementById("leadForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const phoneNumber = document.getElementById("phone").value;
+
+          // Make sure to wait for the FormCapture.captureAndUpload to ensure the snapshot is uploaded successfully.
+          // await FormCapture.captureAndUpload({
+          //   // Include any additional data fields you want here, and they will be saved as metadata with the snapshot.
+          //   // These fields will enable you to query the snapshot by that field.
+          //   phoneNumber: phoneNumber,
+          // });
+
+          // document.getElementById("thankYouPopup").classList.remove("hidden");
+
+          try {
+            await SnapshotTool.captureAndUpload({
+              phoneNumber: document.getElementById("phone").value,
+            });
+
+            // Only runs if capture was successful
+            document.getElementById("thankYouPopup").classList.remove("hidden");
+
+            this.reset();
+          } catch (error) {
+            // Handle the error
+            console.error("Form capture failed:", error);
+          }
+        });
+
+      document
+        .getElementById("closePopup")
+        .addEventListener("click", function () {
+          document.getElementById("thankYouPopup").classList.add("hidden");
+        });
+    </script>
+  </body>
+</html>

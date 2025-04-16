@@ -3,72 +3,405 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lead Generation</title>
+    <title>SolarBright - Free Solar Consultation</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://click-tracker-5de18.web.app/scripts/click-tracker-script-1.0.1-build.16.js"></script>
+    <!-- <script src="http://127.0.0.1:5050/express-consent-script.bundle.js"></script> -->
+    <script src="https://cdn.expressconsent.com/scripts/express-consent-script-1.0.2-build.17.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
   </head>
-  <body
-    class="bg-gradient-to-b from-indigo-50 to-blue-100 min-h-screen flex items-center justify-center p-4"
-  >
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-lg p-6">
-      <div class="text-center mb-6">
-        <span
-          class="inline-block py-1 px-4 bg-indigo-100 text-indigo-800 text-3xl font-bold rounded-lg shadow-sm"
-        >
-          DEMO
-        </span>
-      </div>
-      <h1 class="text-3xl font-bold mb-2 text-center text-gray-800">
-        Lead Form
-      </h1>
-      <p class="text-center text-gray-600 mb-6">
-        Submit the form to see the lead snapshot appear in the ExpressConsent
-        dashboard.
-      </p>
-
-      <form id="leadForm" action="#" method="post" class="space-y-5">
-        <div>
-          <label
-            for="phone"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Phone Number</label
-          >
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Enter a fake phone number"
-          />
-        </div>
-
+  <body class="bg-gradient-to-b from-blue-50 to-green-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-md py-4">
+      <div class="container mx-auto px-4 flex justify-between items-center">
         <div class="flex items-center">
-          <input
-            id="tcpa"
-            name="tcpa"
-            type="checkbox"
-            required
-            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-          />
-          <label for="tcpa" class="ml-2 text-sm text-gray-700">
-            I agree to receive marketing calls, texts & automated messages from
-            Demo Company at the number provided.
-          </label>
+          <i class="fas fa-solar-panel text-yellow-500 text-3xl mr-2"></i>
+          <span class="text-2xl font-bold text-blue-800">SolarBright</span>
         </div>
+        <nav class="hidden md:block">
+          <ul class="flex space-x-6">
+            <li>
+              <a href="#" class="text-gray-600 hover:text-blue-500">Home</a>
+            </li>
+            <li>
+              <a href="#" class="text-gray-600 hover:text-blue-500">About</a>
+            </li>
+            <li>
+              <a href="#" class="text-gray-600 hover:text-blue-500">Services</a>
+            </li>
+            <li>
+              <a href="#" class="text-gray-600 hover:text-blue-500">Contact</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-        <button
-          type="submit"
-          class="w-full text-white bg-indigo-600 hover:bg-indigo-700 font-semibold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12 flex flex-col md:flex-row">
+      <!-- Left Column - Information -->
+      <div class="md:w-1/2 pr-0 md:pr-8 mb-8 md:mb-0">
+        <h1 class="text-4xl font-bold text-blue-800 mb-4">
+          Save Up To 70% On Your Energy Bills
+        </h1>
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-3">
+            Why Choose SolarBright?
+          </h2>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <span>Zero down payment options available</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <span>30% federal tax credit for solar installations</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <span>Professional installation by certified technicians</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <span>25-year warranty on all solar panels</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <span>Custom designs tailored to your home</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-blue-700 text-white p-6 rounded-lg">
+          <h3 class="text-xl font-bold mb-2">Limited Time Offer</h3>
+          <p class="mb-3">
+            Get a FREE home energy audit ($350 value) when you schedule your
+            solar consultation this month!
+          </p>
+          <div class="flex items-center">
+            <i class="fas fa-clock text-yellow-300 text-xl mr-2"></i>
+            <span>Offer expires in 7 days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Form -->
+      <div class="md:w-1/2">
+        <div class="bg-white w-full rounded-2xl shadow-lg p-6">
+          <h2 class="text-3xl font-bold mb-2 text-center text-blue-800">
+            Get Your Free Solar Quote
+          </h2>
+          <p class="text-center text-gray-600 mb-6">
+            Fill out this form to see if your home qualifies for solar savings!
+          </p>
+
+          <form id="leadForm" action="#" method="post" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="firstName"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >First Name</label
+                >
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Your first name"
+                />
+              </div>
+              <div>
+                <label
+                  for="lastName"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Last Name</label
+                >
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Your last name"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label
+                for="phone"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Phone Number</label
+              >
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="(555) 123-4567"
+              />
+            </div>
+
+            <div>
+              <label
+                for="address"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Home Address</label
+              >
+              <input
+                type="text"
+                id="address"
+                name="address"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="123 Main St, City, State"
+              />
+            </div>
+
+            <div>
+              <label
+                for="homeowner"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Are you a homeowner?</label
+              >
+              <select
+                id="homeowner"
+                name="homeowner"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="" disabled selected>Please select</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                for="electricBill"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Average Monthly Electric Bill</label
+              >
+              <select
+                id="electricBill"
+                name="electricBill"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="" disabled selected>Please select</option>
+                <option value="0-100">$0 - $100</option>
+                <option value="101-200">$101 - $200</option>
+                <option value="201-300">$201 - $300</option>
+                <option value="301+">$301+</option>
+              </select>
+            </div>
+
+            <div class="flex items-start mt-4">
+              <input
+                id="tcpa"
+                name="tcpa"
+                type="checkbox"
+                required
+                class="h-4 w-4 mt-1 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label for="tcpa" class="ml-2 text-sm text-gray-700">
+                By submitting this form, I agree to receive marketing calls,
+                texts & automated messages from SolarBright at the number
+                provided. I understand consent is not required to make a
+                purchase.
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full text-white bg-blue-600 hover:bg-blue-700 font-semibold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all"
+            >
+              Get My Free Quote
+            </button>
+
+            <p class="text-xs text-gray-500 text-center mt-3">
+              Your information is secure and will never be sold to third
+              parties. See our
+              <a href="#" class="text-blue-600 hover:underline"
+                >Privacy Policy</a
+              >.
+            </p>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- Testimonials Section -->
+    <section class="bg-white py-12">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">
+          What Our Customers Say
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-gray-50 p-6 rounded-lg shadow">
+            <div class="flex items-center mb-4">
+              <div class="text-yellow-400 flex">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i
+                ><i class="fas fa-star"></i><i class="fas fa-star"></i
+                ><i class="fas fa-star"></i>
+              </div>
+            </div>
+            <p class="text-gray-600 mb-4">
+              "SolarBright installed panels on our home last year and we've
+              already saved over $1,800 on our energy bills. The process was
+              smooth and the team was very professional."
+            </p>
+            <div class="font-semibold">- Michael Thompson, Phoenix AZ</div>
+          </div>
+
+          <div class="bg-gray-50 p-6 rounded-lg shadow">
+            <div class="flex items-center mb-4">
+              <div class="text-yellow-400 flex">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i
+                ><i class="fas fa-star"></i><i class="fas fa-star"></i
+                ><i class="fas fa-star"></i>
+              </div>
+            </div>
+            <p class="text-gray-600 mb-4">
+              "I was skeptical at first, but after seeing the savings on my
+              energy bill, I'm a believer! The installation was completed in
+              just two days with zero mess."
+            </p>
+            <div class="font-semibold">- Sarah Johnson, San Diego CA</div>
+          </div>
+
+          <div class="bg-gray-50 p-6 rounded-lg shadow">
+            <div class="flex items-center mb-4">
+              <div class="text-yellow-400 flex">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i
+                ><i class="fas fa-star"></i><i class="fas fa-star"></i
+                ><i class="fas fa-star-half-alt"></i>
+              </div>
+            </div>
+            <p class="text-gray-600 mb-4">
+              "The consultation was informative with no pressure tactics. Their
+              financing options made going solar much more accessible than I
+              expected."
+            </p>
+            <div class="font-semibold">- David Miller, Denver CO</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between">
+          <div class="mb-6 md:mb-0">
+            <div class="flex items-center">
+              <i class="fas fa-solar-panel text-yellow-400 text-2xl mr-2"></i>
+              <span class="text-xl font-bold">SolarBright</span>
+            </div>
+            <p class="mt-2 text-gray-400">
+              Making clean energy affordable since 2015
+            </p>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+            <div>
+              <h3 class="text-lg font-semibold mb-3">Company</h3>
+              <ul class="space-y-2">
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white"
+                    >About Us</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white"
+                    >Our Team</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white">Careers</a>
+                </li>
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white">Contact</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold mb-3">Services</h3>
+              <ul class="space-y-2">
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white"
+                    >Residential Solar</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white"
+                    >Commercial Solar</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white"
+                    >Battery Storage</a
+                  >
+                </li>
+                <li>
+                  <a href="#" class="text-gray-400 hover:text-white"
+                    >Maintenance</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+              <h3 class="text-lg font-semibold mb-3">Connect With Us</h3>
+              <div class="flex space-x-4 mt-2">
+                <a href="#" class="text-gray-400 hover:text-white text-xl"
+                  ><i class="fab fa-facebook"></i
+                ></a>
+                <a href="#" class="text-gray-400 hover:text-white text-xl"
+                  ><i class="fab fa-twitter"></i
+                ></a>
+                <a href="#" class="text-gray-400 hover:text-white text-xl"
+                  ><i class="fab fa-instagram"></i
+                ></a>
+                <a href="#" class="text-gray-400 hover:text-white text-xl"
+                  ><i class="fab fa-linkedin"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm"
         >
-          Submit
-        </button>
-      </form>
-    </div>
+          &copy; 2023 SolarBright Inc. All rights reserved. |
+          <a href="#" class="hover:text-white">Privacy Policy</a> |
+          <a href="#" class="hover:text-white">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
 
+    <!-- Thank You Popup -->
     <div
       id="thankYouPopup"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
     >
       <div class="bg-white rounded-lg p-8 max-w-md text-center">
         <svg
@@ -87,11 +420,12 @@
         </svg>
         <h2 class="text-2xl font-bold text-gray-800 mb-2">Thank You!</h2>
         <p class="text-gray-600 mb-6">
-          Your information has been submitted successfully.
+          We've received your information and a solar expert will contact you
+          within 24 hours to discuss your custom quote.
         </p>
         <button
           id="closePopup"
-          class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           Close
         </button>
@@ -99,29 +433,28 @@
     </div>
 
     <script>
-      FormCapture.init({
-        onUploadSuccess: function () {
-          console.log("Form data uploaded successfully");
-        },
-        onUploadFailure: function (error) {
-          console.error("Upload failed:", error.message);
-        },
-      });
-
       document
         .getElementById("leadForm")
         .addEventListener("submit", async function (event) {
           event.preventDefault();
 
-          const phoneNumber = document.getElementById("phone").value;
+          try {
+            await SnapshotTool.captureAndUpload({
+              phoneNumber: document.getElementById("phone").value,
+              firstName: document.getElementById("firstName").value,
+              lastName: document.getElementById("lastName").value,
+              email: document.getElementById("email").value,
+              address: document.getElementById("address").value,
+              homeowner: document.getElementById("homeowner").value,
+              electricBill: document.getElementById("electricBill").value,
+            });
 
-          await FormCapture.captureAndUpload({
-            phoneNumber: phoneNumber,
-          });
-
-          document.getElementById("thankYouPopup").classList.remove("hidden");
-
-          this.reset();
+            // Only runs if capture was successful
+            document.getElementById("thankYouPopup").classList.remove("hidden");
+            this.reset();
+          } catch (error) {
+            console.error("Form capture failed:", error);
+          }
         });
 
       document
