@@ -6,7 +6,7 @@
     <title>SolarBright - Free Solar Consultation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- <script src="http://127.0.0.1:5050/express-consent-script.bundle.js"></script> -->
-    <script src="https://cdn.expressconsent.com/scripts/express-consent-script-1.0.2-build.17.js"></script>
+    <script src="https://cdn.expressconsent.com/scripts/express-consent-script-1.0.3-build.18.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -439,7 +439,8 @@
           event.preventDefault();
 
           try {
-            await SnapshotTool.captureAndUpload({
+            // Capture the returned transaction ID
+            const transactionId = await SnapshotTool.captureAndUpload({
               phoneNumber: document.getElementById("phone").value,
               firstName: document.getElementById("firstName").value,
               lastName: document.getElementById("lastName").value,
@@ -449,11 +450,59 @@
               electricBill: document.getElementById("electricBill").value,
             });
 
-            // Only runs if capture was successful
+            // Log the transaction ID to the console
+            console.log(
+              "Form capture successful. Transaction ID:",
+              transactionId
+            );
+
+            // Show popup and reset form immediately
             document.getElementById("thankYouPopup").classList.remove("hidden");
             this.reset();
+
+            // Wait 10 seconds (10000 milliseconds) then send the POST request
+            setTimeout(() => {
+              const endpointUrl =
+                "https://us-central1-click-tracker-5de18.cloudfunctions.net/shareSnapshot";
+              const postData = {
+                domainId: "bigfishtech.github.io",
+                snapshotTransactionId: transactionId,
+                affiliateTag: "x3Y1ClIkERdJzi5fyAeY",
+              };
+
+              console.log("Sending POST request after 10 seconds:", postData);
+
+              fetch(endpointUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData),
+              })
+                .then(async (response) => {
+                  if (!response.ok) {
+                    // Handle errors (e.g., 400 Bad Request, 500 Internal Server Error)
+                    const errorText = await response.text();
+                    console.error(
+                      `Error calling shareSnapshot: ${response.status} ${response.statusText}`,
+                      errorText
+                    );
+                    // Throw an error or handle it as needed
+                    throw new Error(`Failed to share snapshot: ${errorText}`);
+                  }
+                  return response.json(); // Or response.text() if it doesn't return JSON
+                })
+                .then((data) => {
+                  console.log("POST request successful:", data);
+                })
+                .catch((error) => {
+                  console.error("Error sending POST request:", error);
+                });
+            }, 10000); // 10000 milliseconds = 10 seconds
           } catch (error) {
             console.error("Form capture failed:", error);
+            // Optionally, inform the user that submission failed
+            // alert("There was an issue submitting your information. Please try again.");
           }
         });
 
