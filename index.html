@@ -14,7 +14,7 @@
     <!-- <script src="http://127.0.0.1:5050/express-consent-script.bundle.js/?cid=LI21tgwphH3Pp0XQs996"></script> -->
 
     <!-- Production assets with production script -->
-    <script src="https://cdn.expressconsent.com/scripts/express-consent-script-1.0.13-build.31.js?cid=LI21tgwphH3Pp0XQs996"></script>
+    <script src="https://cdn.expressconsent.com/scripts/express-consent-script-1.0.14-build.32.js?cid=LI21tgwphH3Pp0XQs996"></script>
 
     <link
       rel="stylesheet"
@@ -184,6 +184,7 @@
                 required
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="123 Main St, City, State"
+                data-expressconsent-mask
               />
             </div>
 
@@ -241,12 +242,24 @@
               </label>
             </div>
 
-            <button
-              type="submit"
-              class="w-full text-white bg-blue-600 hover:bg-blue-700 font-semibold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all"
-            >
-              Get My Free Quote
-            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                type="submit"
+                data-expressconsent-highlight-label="plan-gold"
+                value="gold"
+                class="w-full text-white bg-blue-600 hover:bg-blue-700 font-semibold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all"
+              >
+                Get My Free Quote – Gold Plan
+              </button>
+              <button
+                type="submit"
+                data-expressconsent-highlight-label="plan-silver"
+                value="silver"
+                class="w-full text-white bg-gray-700 hover:bg-gray-800 font-semibold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all"
+              >
+                Get My Free Quote – Silver Plan
+              </button>
+            </div>
 
             <p class="text-xs text-gray-500 text-center mt-3">
               Your information is secure and will never be sold to third
@@ -449,15 +462,22 @@
 
           try {
             // Capture the returned transaction ID String for you to store in your database
-            const transactionId = await SnapshotTool.captureAndUpload({
-              phoneNumber: document.getElementById("phone").value,
-              firstName: document.getElementById("firstName").value,
-              lastName: document.getElementById("lastName").value,
-              email: document.getElementById("email").value,
-              address: document.getElementById("address").value,
-              homeowner: document.getElementById("homeowner").value,
-              electricBill: document.getElementById("electricBill").value,
-            });
+            const token =
+              event.submitter?.getAttribute(
+                "data-expressconsent-highlight-label"
+              ) || undefined;
+            const transactionId = await SnapshotTool.captureAndUpload(
+              {
+                phoneNumber: document.getElementById("phone").value,
+                firstName: document.getElementById("firstName").value,
+                lastName: document.getElementById("lastName").value,
+                email: document.getElementById("email").value,
+                address: document.getElementById("address").value,
+                homeowner: document.getElementById("homeowner").value,
+                electricBill: document.getElementById("electricBill").value,
+              },
+              token
+            );
 
             // Log the transaction ID to the console
             console.log(
