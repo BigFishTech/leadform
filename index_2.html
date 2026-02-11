@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Terms Editor</title>
+  <style>
+    :root {
+      --page-width: 8.5in;
+      --page-height: 11in;
+      --page-pad: 0.74in;
+      --ink: #0f172a;
+      --muted: #526075;
+      --line: #d6deea;
+      --line-soft: #e8edf5;
+      --surface: #e9eef7;
+      --card: #ffffff;
+      --shadow: 0 20px 45px rgba(11, 20, 41, 0.16);
+      --brand-700: #102a43;
+      --brand-600: #1d4d78;
+      --brand-500: #2f6da0;
+      --brand-300: #8bb9de;
+      --accent-1: #0f6b88;
+      --accent-2: #4f46e5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", "Avenir Next", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(78, 126, 180, 0.22), transparent 36%),
+        radial-gradient(circle at 92% 85%, rgba(112, 155, 206, 0.2), transparent 42%),
+        linear-gradient(150deg, #eef3fa 0%, #e2eaf5 42%, #ebf1f9 100%);
+      min-height: 100vh;
+    }
+
+    .app-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(178, 194, 214, 0.7);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 20px rgba(30, 60, 100, 0.07);
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 240px;
+    }
+
+    .toolbar-logo {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      flex: 0 0 24px;
+    }
+
+    .toolbar-title {
+      font-weight: 800;
+      color: var(--brand-700);
+      font-size: 15px;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    .toolbar-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #0f172a;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    button:hover {
+      border-color: #b9c9de;
+      background: #f8fbff;
+      transform: translateY(-1px);
+    }
+
+    .button-primary {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(120deg, var(--brand-700), var(--brand-500));
+      box-shadow: 0 8px 20px rgba(29, 77, 120, 0.25);
+    }
+
+    .button-primary:hover {
+      background: linear-gradient(120deg, #0e2740, #295e8a);
+      box-shadow: 0 10px 20px rgba(29, 77, 120, 0.3);
+    }
+
+    .doc-shell {
+      max-width: calc(var(--page-width) + 2.3rem);
+      margin: 20px auto 46px;
+      padding: 0 1.15rem;
+    }
+
+    .page {
+      width: var(--page-width);
+      min-height: var(--page-height);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      margin: 0 auto 18px;
+      padding: var(--page-pad);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid rgba(197, 209, 227, 0.45);
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      height: 10px;
+      background: linear-gradient(95deg, var(--brand-700) 0%, var(--brand-500) 45%, var(--brand-300) 100%);
+      opacity: 0.9;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    .editable {
+      outline: none;
+      border-radius: 7px;
+      transition: box-shadow 0.17s ease, background-color 0.17s ease;
+    }
+
+    .editable:focus {
+      box-shadow: 0 0 0 2px rgba(53, 114, 164, 0.25);
+      background: #f8fbff;
+    }
+
+    .cover-page {
+      background:
+        radial-gradient(circle at 87% 14%, rgba(93, 138, 181, 0.15), transparent 30%),
+        radial-gradient(circle at 7% 93%, rgba(61, 114, 165, 0.14), transparent 32%),
+        #ffffff;
+    }
+
+    .cover-brand {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cover-logo {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #f4f8fd;
+      border: 1px solid #dce6f3;
+      padding: 6px;
+      flex: 0 0 46px;
+    }
+
+    .cover-banner {
+      margin-top: 14px;
+      padding: 18px 20px;
+      border-radius: 14px;
+      background: linear-gradient(130deg, #f7fbff, #eaf3fd 55%, #f7fbff);
+      border: 1px solid #d8e5f5;
+      color: #13243a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-banner::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -70px;
+      top: -140px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(126, 176, 219, 0.26), rgba(126, 176, 219, 0));
+      pointer-events: none;
+    }
+
+    .cover-banner .section-kicker {
+      color: #4f6783;
+      margin-bottom: 8px;
+    }
+
+    .cover-title {
+      margin: 0;
+      color: #10243b;
+      font-size: 46px;
+      line-height: 1.02;
+      font-weight: 850;
+      letter-spacing: -0.03em;
+      max-width: 100%;
+      text-wrap: balance;
+    }
+
+    .cover-sub {
+      margin: 10px 0 0;
+      color: #264261;
+      font-size: 27px;
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .cover-meta-wrap {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      border: 1px solid #d3deee;
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      color: #1f3650;
+      background: #f7faff;
+      font-weight: 600;
+    }
+
+    .cover-meta {
+      margin: 0;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .cover-bottom {
+      margin-top: 18px;
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      background: linear-gradient(170deg, #ffffff, #f6f9fe);
+      padding: 18px;
+      font-size: 13px;
+    }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 4px;
+    }
+
+    .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #5f738d;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .value {
+      color: #102136;
+      line-height: 1.62;
+      font-size: 13.4px;
+    }
+
+    .section-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: #60728a;
+      font-weight: 750;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      color: #102a43;
+      font-size: 34px;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      font-weight: 850;
+    }
+
+    .lead {
+      color: #213a54;
+      font-size: 16px;
+      line-height: 1.72;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0 0 11px;
+      line-height: 1.68;
+      font-size: 15px;
+      color: #1f2f46;
+    }
+
+    .plan-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 9px;
+    }
+
+    .plan-list li {
+      margin: 0;
+      line-height: 1.5;
+      color: #1f2f46;
+      font-size: 15px;
+      padding: 11px 13px 11px 14px;
+      border: 1px solid #dde6f1;
+      border-radius: 10px;
+      background: linear-gradient(155deg, #f7faff, #fcfdff);
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+    }
+
+    .plan-list li::before {
+      content: "";
+      margin-top: 7px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(130deg, var(--accent-1), var(--accent-2));
+      flex: 0 0 8px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.06fr 0.94fr;
+      gap: 18px;
+      margin-top: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid #d9e3f0;
+      border-radius: 14px;
+      padding: 16px 16px 14px;
+      background: linear-gradient(145deg, #ffffff, #f8fbff);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .panel h3 {
+      margin: 0 0 8px;
+      color: #173b5f;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .small-text {
+      color: #2a3f57;
+      font-size: 14px;
+      line-height: 1.58;
+      margin-bottom: 6px;
+    }
+
+    .terms-header {
+      margin-top: 6px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #e2e9f3;
+    }
+
+    .terms-title {
+      margin: 0 0 6px;
+      color: #102a43;
+      font-size: 34px;
+      line-height: 1.07;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+    }
+
+    .terms-sub {
+      margin: 0;
+      color: #5f738d;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      font-weight: 800;
+    }
+
+    .terms-table-wrap {
+      margin-top: 14px;
+      border: 1px solid #d6e0ee;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 6px 14px rgba(24, 47, 75, 0.05);
+    }
+
+    .terms-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .terms-table tr:nth-child(even) td {
+      background: #fbfcff;
+    }
+
+    .terms-table td {
+      padding: 12px 13px;
+      border-bottom: 1px solid #e5ebf4;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .terms-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .terms-table td:first-child {
+      width: 42%;
+      color: #4e627d;
+      font-weight: 700;
+      border-right: 1px solid #e5ebf4;
+      background: #f8fafe;
+    }
+
+    .terms-table td:last-child {
+      color: #132238;
+    }
+
+    .other-services {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px dashed #c9d7e8;
+      background: #f8fbff;
+      color: #1f324a;
+      font-size: 14px;
+    }
+
+    .page-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid #e8eef7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #65768c;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #314155;
+      border: 1px solid #d8e2ef;
+      border-radius: 999px;
+      padding: 6px 11px;
+      background: linear-gradient(160deg, #fff, #f8fbff);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.14);
+    }
+
+    @media (max-width: 900px) {
+      .doc-shell {
+        max-width: 100%;
+        padding: 0 10px;
+      }
+
+      .page {
+        width: 100%;
+        min-height: auto;
+        padding: 24px 20px 28px;
+        border-radius: 12px;
+      }
+
+      .cover-title {
+        max-width: 100%;
+      }
+
+      .cover-logo {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+      }
+
+      .split,
+      .cover-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      @page {
+        size: letter;
+        margin: 0.35in;
+      }
+
+      *,
+      *::before,
+      *::after {
+        background: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+
+      html,
+      body {
+        width: auto;
+        height: auto;
+      }
+
+      body {
+        background: #ffffff;
+      }
+
+      .app-toolbar {
+        display: none !important;
+      }
+
+      .doc-shell {
+        margin: 0;
+        max-width: none;
+        padding: 0;
+      }
+
+      .page::before {
+        display: none !important;
+      }
+
+      .page {
+        width: auto;
+        height: auto;
+        min-height: calc(11in - 0.7in);
+        margin: 0;
+        padding: var(--page-pad);
+        box-shadow: none;
+        border-radius: 0;
+        border: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        overflow: hidden;
+      }
+
+      .page:last-child {
+        page-break-after: auto;
+      }
+
+      .editable:focus {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-toolbar">
+    <div class="toolbar-left">
+      <svg class="toolbar-logo" width="24" height="24" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(3.0972,0,0,3.0972,-86.6672,-272.547)">
+        <path d="M108.701,91.745C114.286,91.745 172.566,125.393 175.359,130.231C178.152,135.068 178.152,202.364 175.359,207.201C172.566,212.039 114.286,245.687 108.701,245.687C103.115,245.687 44.835,212.039 42.042,207.201C39.249,202.364 39.249,135.068 42.042,130.231C44.835,125.393 103.115,91.745 108.701,91.745Z" style="fill:rgb(24,24,27);"/>
+    </g>
+    <g transform="matrix(0.929364,0.536569,-0.536569,0.929364,151.801,-116.483)">
+        <path d="M162.775,98.923C171.026,94.159 328.974,94.159 337.225,98.923C345.475,103.686 424.449,240.473 424.449,250C424.449,259.527 345.475,396.314 337.225,401.077C328.974,405.841 171.026,405.841 162.775,401.077C154.525,396.314 75.551,259.527 75.551,250C75.551,240.473 154.525,103.686 162.775,98.923ZM183.998,135.68C190.241,132.076 309.759,132.076 316.002,135.68C322.246,139.285 382.005,242.791 382.005,250C382.005,257.209 322.246,360.715 316.002,364.32C309.759,367.924 190.241,367.924 183.998,364.32C177.754,360.715 117.995,257.209 117.995,250C117.995,242.791 177.754,139.285 183.998,135.68Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(0.929364,0.536569,-0.536569,0.929364,151.801,-116.483)">
+        <path d="M162.775,98.923C171.026,94.159 328.974,94.159 337.225,98.923C345.385,103.634 422.72,237.48 424.385,249.646L381.941,249.646C380.342,239.912 322.158,139.234 316.002,135.68C309.759,132.076 190.241,132.076 183.998,135.68L162.775,98.923Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(0.929364,0.536569,-0.536569,0.929364,131.168,-8.01447)">
+        <path d="M348.054,152.497L390.498,152.497L390.562,152.852C390.562,162.379 311.588,299.166 303.338,303.929L282.116,267.171C288.359,263.567 348.118,160.061 348.118,152.852L348.054,152.497Z" style="fill:rgb(0,122,255);fill-opacity:0.3;"/>
+    </g>
+    <g transform="matrix(0.700007,0.834098,-0.647205,0.543159,271.554,-48.3336)">
+        <path d="M260.699,80.999C260.699,77.877 258.733,75.342 256.31,75.342L221.196,75.342C218.774,75.342 216.807,77.877 216.807,80.999L216.807,309.614C216.807,312.736 218.774,315.271 221.196,315.271L256.31,315.271C258.733,315.271 260.699,312.736 260.699,309.614L260.699,80.999Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(-0.700007,0.834098,0.400898,0.336449,306.058,16.8361)">
+        <path d="M260.699,84.474C260.699,79.434 258.733,75.342 256.31,75.342L221.196,75.342C218.774,75.342 216.807,79.434 216.807,84.474L216.807,306.139C216.807,311.179 218.774,315.271 221.196,315.271L256.31,315.271C258.733,315.271 260.699,311.179 260.699,306.139L260.699,84.474Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(1.07314,0,0,1.07314,-18.2844,-18.2844)">
+        <path d="M136.048,316.437C143.509,324.682 242.939,382.005 250,382.005L250,424.449C240.628,424.449 108.112,348.029 99.29,337.659L136.048,316.437Z" style="fill:rgb(0,122,255);"/>
+    </g>
+    <g transform="matrix(1.07314,0,0,1.07314,-18.2844,-18.2844)">
+        <path d="M99.155,162.501C106.68,152.797 240.578,75.551 250,75.551L250,117.995C242.892,117.995 142.164,176.093 135.913,183.723L99.155,162.501Z" style="fill:rgb(0,122,255);fill-opacity:0.3;"/>
+    </g>
+    <g transform="matrix(1.07314,0,0,1.07314,-18.2844,-18.2844)">
+        <path d="M99.155,162.501L135.913,183.723L135.68,183.998C132.076,190.241 132.076,309.759 135.68,316.002L136.048,316.437L99.29,337.659L98.923,337.225C94.159,328.974 94.159,171.026 98.923,162.775L99.155,162.501Z" style="fill:rgb(0,122,255);fill-opacity:0.65;"/>
+    </g>
+</svg>
+      <p class="toolbar-title">Product Terms Editor</p>
+      <span class="status-badge"><span class="status-dot"></span> Editable mode on</span>
+    </div>
+    <p class="toolbar-note">Click any text to edit. Use Save as PDF when finished.</p>
+    <div class="toolbar-actions">
+      <button id="resetButton" title="Reset to original extracted copy">Reset Text</button>
+      <button class="button-primary" id="exportButton" title="Open print dialog to save PDF">Save as PDF</button>
+    </div>
+  </header>
+
+  <main class="doc-shell" id="docRoot">
+    <section class="page cover-page">
+      <div class="cover-brand">
+        <svg class="cover-logo" width="46" height="46" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(3.0972,0,0,3.0972,-86.6672,-272.547)">
+        <path d="M108.701,91.745C114.286,91.745 172.566,125.393 175.359,130.231C178.152,135.068 178.152,202.364 175.359,207.201C172.566,212.039 114.286,245.687 108.701,245.687C103.115,245.687 44.835,212.039 42.042,207.201C39.249,202.364 39.249,135.068 42.042,130.231C44.835,125.393 103.115,91.745 108.701,91.745Z" style="fill:rgb(24,24,27);"/>
+    </g>
+    <g transform="matrix(0.929364,0.536569,-0.536569,0.929364,151.801,-116.483)">
+        <path d="M162.775,98.923C171.026,94.159 328.974,94.159 337.225,98.923C345.475,103.686 424.449,240.473 424.449,250C424.449,259.527 345.475,396.314 337.225,401.077C328.974,405.841 171.026,405.841 162.775,401.077C154.525,396.314 75.551,259.527 75.551,250C75.551,240.473 154.525,103.686 162.775,98.923ZM183.998,135.68C190.241,132.076 309.759,132.076 316.002,135.68C322.246,139.285 382.005,242.791 382.005,250C382.005,257.209 322.246,360.715 316.002,364.32C309.759,367.924 190.241,367.924 183.998,364.32C177.754,360.715 117.995,257.209 117.995,250C117.995,242.791 177.754,139.285 183.998,135.68Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(0.929364,0.536569,-0.536569,0.929364,151.801,-116.483)">
+        <path d="M162.775,98.923C171.026,94.159 328.974,94.159 337.225,98.923C345.385,103.634 422.72,237.48 424.385,249.646L381.941,249.646C380.342,239.912 322.158,139.234 316.002,135.68C309.759,132.076 190.241,132.076 183.998,135.68L162.775,98.923Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(0.929364,0.536569,-0.536569,0.929364,131.168,-8.01447)">
+        <path d="M348.054,152.497L390.498,152.497L390.562,152.852C390.562,162.379 311.588,299.166 303.338,303.929L282.116,267.171C288.359,263.567 348.118,160.061 348.118,152.852L348.054,152.497Z" style="fill:rgb(0,122,255);fill-opacity:0.3;"/>
+    </g>
+    <g transform="matrix(0.700007,0.834098,-0.647205,0.543159,271.554,-48.3336)">
+        <path d="M260.699,80.999C260.699,77.877 258.733,75.342 256.31,75.342L221.196,75.342C218.774,75.342 216.807,77.877 216.807,80.999L216.807,309.614C216.807,312.736 218.774,315.271 221.196,315.271L256.31,315.271C258.733,315.271 260.699,312.736 260.699,309.614L260.699,80.999Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(-0.700007,0.834098,0.400898,0.336449,306.058,16.8361)">
+        <path d="M260.699,84.474C260.699,79.434 258.733,75.342 256.31,75.342L221.196,75.342C218.774,75.342 216.807,79.434 216.807,84.474L216.807,306.139C216.807,311.179 218.774,315.271 221.196,315.271L256.31,315.271C258.733,315.271 260.699,311.179 260.699,306.139L260.699,84.474Z" style="fill:rgb(235,235,235);"/>
+    </g>
+    <g transform="matrix(1.07314,0,0,1.07314,-18.2844,-18.2844)">
+        <path d="M136.048,316.437C143.509,324.682 242.939,382.005 250,382.005L250,424.449C240.628,424.449 108.112,348.029 99.29,337.659L136.048,316.437Z" style="fill:rgb(0,122,255);"/>
+    </g>
+    <g transform="matrix(1.07314,0,0,1.07314,-18.2844,-18.2844)">
+        <path d="M99.155,162.501C106.68,152.797 240.578,75.551 250,75.551L250,117.995C242.892,117.995 142.164,176.093 135.913,183.723L99.155,162.501Z" style="fill:rgb(0,122,255);fill-opacity:0.3;"/>
+    </g>
+    <g transform="matrix(1.07314,0,0,1.07314,-18.2844,-18.2844)">
+        <path d="M99.155,162.501L135.913,183.723L135.68,183.998C132.076,190.241 132.076,309.759 135.68,316.002L136.048,316.437L99.29,337.659L98.923,337.225C94.159,328.974 94.159,171.026 98.923,162.775L99.155,162.501Z" style="fill:rgb(0,122,255);fill-opacity:0.65;"/>
+    </g>
+</svg>
+        <div class="label">ExpressConsent</div>
+      </div>
+      <div class="cover-banner">
+        <div class="section-kicker editable" contenteditable="true">Client Proposal</div>
+        <h1 class="cover-title editable" contenteditable="true">What If Media Group</h1>
+        <h2 class="cover-sub editable" contenteditable="true">Business Proposal</h2>
+      </div>
+      <div class="cover-meta-wrap">
+        <p class="pill cover-meta editable" contenteditable="true">May 22, 2025</p>
+        <p class="pill cover-meta editable" contenteditable="true">www.expressconsent.com</p>
+      </div>
+
+      <div class="cover-bottom">
+        <div class="cover-grid">
+          <div>
+            <div class="label">Prepared By</div>
+            <div class="value editable" contenteditable="true">Dylan Kane</div>
+            <div class="value editable" contenteditable="true">Phone | (724) 549-8027</div>
+            <div class="value editable" contenteditable="true">Email | dkane@expressconsent.com</div>
+          </div>
+          <div>
+            <div class="label">Prepared For</div>
+            <div class="value editable" contenteditable="true">Andrew Klayman</div>
+            <div class="value editable" contenteditable="true">Email | andrew@whatifmediagroup.com</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <span class="editable" contenteditable="true">ExpressConsent</span>
+        <span class="editable" contenteditable="true">-- 1 of 3 --</span>
+      </div>
+    </section>
+
+    <section class="page">
+      <div class="section-kicker editable" contenteditable="true">Proposal Summary</div>
+      <h2 class="section-title editable" contenteditable="true">The Plan</h2>
+      <p class="editable lead" contenteditable="true">ExpressConsent's mission is to give our clients control over their TCPA acquisition channel.</p>
+      <p class="editable" contenteditable="true">ExpressConsent and What If Media Group, LLC intend to formalize a service agreement in which ExpressConsent will empower What If Media Group to:</p>
+      <ul class="plan-list">
+        <li class="editable" contenteditable="true">Avoid the uncertainty and fragility of video-based consent verification</li>
+        <li class="editable" contenteditable="true">Skip manual certificate redemption or token retrieval workflows</li>
+        <li class="editable" contenteditable="true">Instantly capture and store verifiable TCPA consent for every lead directly on What If Media Group's servers</li>
+      </ul>
+
+      <div class="split">
+        <div class="panel">
+          <h3>Customer</h3>
+          <p class="small-text editable" contenteditable="true">What If Media Group, LLC</p>
+        </div>
+
+        <div class="panel">
+          <h3>Company Details</h3>
+          <p class="small-text editable" contenteditable="true">Billing Address - *NA</p>
+          <p class="small-text editable" contenteditable="true">Billing Contact Name - *NA</p>
+          <p class="small-text editable" contenteditable="true">Billing Contact Email - *NA</p>
+          <p class="small-text editable" contenteditable="true">Billing Phone - *NA</p>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <span class="editable" contenteditable="true">ExpressConsent | Page 2</span>
+        <span class="editable" contenteditable="true">-- 2 of 3 --</span>
+      </div>
+    </section>
+
+    <section class="page">
+      <div class="terms-header">
+        <h2 class="terms-title editable" contenteditable="true">Product Term Sheet</h2>
+        <p class="terms-sub editable" contenteditable="true">Proposed Terms</p>
+      </div>
+
+      <div class="terms-table-wrap">
+        <table class="terms-table">
+          <tr>
+            <td class="editable" contenteditable="true">Name of Licensee</td>
+            <td class="editable" contenteditable="true">What If Media Group, LLC</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Date</td>
+            <td class="editable" contenteditable="true">05/22/2025</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Address of Licensee</td>
+            <td class="editable" contenteditable="true">400 Kelby Street, Suite 1200<br />Fort Lee, NJ 07024</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Service Term</td>
+            <td class="editable" contenteditable="true">30 Days</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Price per Term (Monthly)</td>
+            <td class="editable" contenteditable="true">No Cost</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Implementation Cost ($1,000)</td>
+            <td class="editable" contenteditable="true">Waived</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Retention Time Period</td>
+            <td class="editable" contenteditable="true">60 Months</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">API Upload (Yes/No)</td>
+            <td class="editable" contenteditable="true">Yes</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Product Code</td>
+            <td class="editable" contenteditable="true">Instant EC Validation Upload</td>
+          </tr>
+          <tr>
+            <td class="editable" contenteditable="true">Sworn Litigation Declaration</td>
+            <td class="editable" contenteditable="true">$250 per declaration</td>
+          </tr>
+        </table>
+      </div>
+
+      <p class="editable other-services" contenteditable="true"><strong>Other Services</strong></p>
+
+      <div class="page-footer">
+        <span class="editable" contenteditable="true">ExpressConsent | Page 3</span>
+        <span class="editable" contenteditable="true">-- 3 of 3 --</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const exportButton = document.getElementById("exportButton");
+      const resetButton = document.getElementById("resetButton");
+      const root = document.getElementById("docRoot");
+
+      // Persist edits locally so accidental refresh does not lose work.
+      const storageKey = "product-terms-editor-html-v2";
+      const originalHtml = root.innerHTML;
+
+      function saveDraft() {
+        try {
+          localStorage.setItem(storageKey, root.innerHTML);
+        } catch (error) {
+          // Ignore storage errors in restricted browser modes.
+        }
+      }
+
+      function loadDraft() {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) root.innerHTML = saved;
+        } catch (error) {
+          // Ignore storage errors in restricted browser modes.
+        }
+      }
+
+      function resetDraft() {
+        const confirmed = window.confirm("Reset all edits back to the original document text?");
+        if (!confirmed) return;
+        root.innerHTML = originalHtml;
+        saveDraft();
+      }
+
+      function exportPdf() {
+        // Uses the browser print dialog; users choose "Save as PDF".
+        window.print();
+      }
+
+      loadDraft();
+      root.addEventListener("input", saveDraft);
+      resetButton.addEventListener("click", resetDraft);
+      exportButton.addEventListener("click", exportPdf);
+    })();
+  </script>
+</body>
+</html>
